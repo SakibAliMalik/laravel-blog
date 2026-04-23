@@ -8,7 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        $prefix = config('blog.table_prefix', '');
+
+        Schema::create($prefix . 'posts', function (Blueprint $table) use ($prefix) {
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
@@ -17,7 +19,7 @@ return new class extends Migration
             $table->text('excerpt')->nullable();
             $table->string('featured_image', 500)->nullable();
             $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained($prefix . 'categories')->nullOnDelete();
             $table->enum('status', ['draft', 'published', 'scheduled', 'archived'])->default('draft');
             $table->timestamp('published_at')->nullable();
             $table->string('meta_title')->nullable();
@@ -42,6 +44,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        $prefix = config('blog.table_prefix', '');
+        Schema::dropIfExists($prefix . 'posts');
     }
 };

@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('post_tags', function (Blueprint $table) {
-            $table->foreignId('post_id')->constrained('posts')->cascadeOnDelete();
-            $table->foreignId('tag_id')->constrained('tags')->cascadeOnDelete();
+        $prefix = config('blog.table_prefix', '');
+
+        Schema::create($prefix . 'post_tags', function (Blueprint $table) use ($prefix) {
+            $table->foreignId('post_id')->constrained($prefix . 'posts')->cascadeOnDelete();
+            $table->foreignId('tag_id')->constrained($prefix . 'tags')->cascadeOnDelete();
             $table->primary(['post_id', 'tag_id']);
             $table->timestamps();
 
@@ -21,6 +23,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('post_tags');
+        $prefix = config('blog.table_prefix', '');
+        Schema::dropIfExists($prefix . 'post_tags');
     }
 };

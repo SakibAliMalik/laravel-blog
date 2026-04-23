@@ -14,6 +14,11 @@ class PostView extends Model
 
     protected $fillable = ['post_id', 'visitor_id', 'ip_address', 'user_agent'];
 
+    public function getTable(): string
+    {
+        return config('blog.table_prefix', '') . 'post_views';
+    }
+
     public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class);

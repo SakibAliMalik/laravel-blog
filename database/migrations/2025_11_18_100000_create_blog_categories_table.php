@@ -8,12 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        $prefix = config('blog.table_prefix', '');
+
+        Schema::create($prefix . 'categories', function (Blueprint $table) use ($prefix) {
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
             $table->text('description')->nullable();
-            $table->foreignId('parent_id')->nullable()->constrained('categories')->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained($prefix . 'categories')->cascadeOnDelete();
             $table->unsignedInteger('order_position')->default(0);
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
@@ -29,6 +31,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        $prefix = config('blog.table_prefix', '');
+        Schema::dropIfExists($prefix . 'categories');
     }
 };

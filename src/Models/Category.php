@@ -26,6 +26,11 @@ class Category extends Model
         'parent_id' => 'integer',
     ];
 
+    public function getTable(): string
+    {
+        return config('blog.table_prefix', '') . 'categories';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Category $category): void {

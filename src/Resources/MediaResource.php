@@ -4,9 +4,11 @@ namespace SakibAliMalik\Blog\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use SakibAliMalik\Blog\Traits\ResolvesUserName;
 
 class MediaResource extends JsonResource
 {
+    use ResolvesUserName;
     public function toArray(Request $request): array
     {
         return [
@@ -26,7 +28,7 @@ class MediaResource extends JsonResource
             'post_id' => $this->post_id,
             'uploader' => $this->whenLoaded('uploader', fn() => [
                 'id' => $this->uploader?->id,
-                'name' => $this->uploader?->name,
+                'name' => $this->resolveUserName($this->uploader),
                 'email' => $this->uploader?->email,
             ]),
             'created_at' => $this->created_at,

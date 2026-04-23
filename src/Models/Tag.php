@@ -16,6 +16,11 @@ class Tag extends Model
 
     protected $fillable = ['name', 'slug', 'description', 'color'];
 
+    public function getTable(): string
+    {
+        return config('blog.table_prefix', '') . 'tags';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Tag $tag): void {
@@ -27,7 +32,7 @@ class Tag extends Model
 
     public function posts(): BelongsToMany
     {
-        return $this->belongsToMany(Post::class, 'post_tags')->withTimestamps();
+        return $this->belongsToMany(Post::class, config('blog.table_prefix', '') . 'post_tags')->withTimestamps();
     }
 
     public function scopePopular(Builder $query, int $limit = 10): Builder

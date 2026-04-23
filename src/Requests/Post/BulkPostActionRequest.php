@@ -4,6 +4,7 @@ namespace SakibAliMalik\Blog\Requests\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use SakibAliMalik\Blog\Models\Post;
 
 class BulkPostActionRequest extends FormRequest
 {
@@ -17,7 +18,7 @@ class BulkPostActionRequest extends FormRequest
         return [
             'action' => ['required', Rule::in(['publish', 'unpublish', 'archive', 'delete'])],
             'post_ids' => ['required', 'array', 'min:1'],
-            'post_ids.*' => ['integer', 'exists:posts,id'],
+            'post_ids.*' => ['integer', Rule::exists(Post::class, 'id')],
         ];
     }
 }

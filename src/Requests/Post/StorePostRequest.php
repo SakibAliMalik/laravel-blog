@@ -4,6 +4,9 @@ namespace SakibAliMalik\Blog\Requests\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use SakibAliMalik\Blog\Models\Category;
+use SakibAliMalik\Blog\Models\Post;
+use SakibAliMalik\Blog\Models\Tag;
 
 class StorePostRequest extends FormRequest
 {
@@ -26,16 +29,16 @@ class StorePostRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:posts,slug'],
+            'slug' => ['nullable', 'string', 'max:255', Rule::unique(Post::class, 'slug')],
             'content' => ['required', 'string'],
             'content_json' => ['nullable', 'array'],
             'excerpt' => ['nullable', 'string', 'max:1000'],
             'featured_image' => ['nullable', 'string', 'max:500'],
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'category_id' => ['nullable', 'integer', Rule::exists(Category::class, 'id')],
             'status' => ['required', Rule::in(['draft', 'published', 'scheduled', 'archived'])],
             'published_at' => ['nullable', 'date'],
             'tags' => ['nullable', 'array'],
-            'tags.*' => ['integer', 'exists:tags,id'],
+            'tags.*' => ['integer', Rule::exists(Tag::class, 'id')],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
             'meta_keywords' => ['nullable', 'string', 'max:500'],

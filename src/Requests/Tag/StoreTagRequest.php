@@ -3,6 +3,8 @@
 namespace SakibAliMalik\Blog\Requests\Tag;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use SakibAliMalik\Blog\Models\Tag;
 
 class StoreTagRequest extends FormRequest
 {
@@ -14,8 +16,8 @@ class StoreTagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:100', 'unique:tags,name'],
-            'slug' => ['nullable', 'string', 'max:100', 'unique:tags,slug'],
+            'name' => ['required', 'string', 'max:100', Rule::unique(Tag::class, 'name')],
+            'slug' => ['nullable', 'string', 'max:100', Rule::unique(Tag::class, 'slug')],
             'description' => ['nullable', 'string'],
             'color' => ['nullable', 'string', 'max:50'],
         ];

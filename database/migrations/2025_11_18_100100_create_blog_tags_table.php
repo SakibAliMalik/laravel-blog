@@ -8,7 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        $prefix = config('blog.table_prefix', '');
+
+        Schema::create($prefix . 'tags', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100)->unique();
             $table->string('slug', 100)->unique();
@@ -23,6 +25,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        $prefix = config('blog.table_prefix', '');
+        Schema::dropIfExists($prefix . 'tags');
     }
 };

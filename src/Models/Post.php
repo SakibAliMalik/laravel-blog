@@ -36,6 +36,11 @@ class Post extends Model
 
     protected $appends = ['is_published', 'reading_time_text'];
 
+    public function getTable(): string
+    {
+        return config('blog.table_prefix', '') . 'posts';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Post $post): void {
@@ -79,7 +84,7 @@ class Post extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'post_tags')->withTimestamps();
+        return $this->belongsToMany(Tag::class, config('blog.table_prefix', '') . 'post_tags')->withTimestamps();
     }
 
     public function media(): HasMany

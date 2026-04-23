@@ -4,9 +4,11 @@ namespace SakibAliMalik\Blog\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use SakibAliMalik\Blog\Traits\ResolvesUserName;
 
 class PostResource extends JsonResource
 {
+    use ResolvesUserName;
     public function toArray(Request $request): array
     {
         return [
@@ -30,7 +32,7 @@ class PostResource extends JsonResource
             'category' => new CategoryResource($this->whenLoaded('category')),
             'author' => $this->whenLoaded('author', fn() => [
                 'id' => $this->author?->id,
-                'name' => $this->author?->name,
+                'name' => $this->resolveUserName($this->author),
                 'email' => $this->author?->email,
             ]),
             'tags' => TagResource::collection($this->whenLoaded('tags')),

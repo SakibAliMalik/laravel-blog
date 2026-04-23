@@ -3,6 +3,8 @@
 namespace SakibAliMalik\Blog\Requests\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use SakibAliMalik\Blog\Models\Category;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -15,9 +17,9 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:100'],
-            'slug' => ['nullable', 'string', 'max:100', 'unique:categories,slug'],
+            'slug' => ['nullable', 'string', 'max:100', Rule::unique(Category::class, 'slug')],
             'description' => ['nullable', 'string'],
-            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'parent_id' => ['nullable', 'integer', Rule::exists(Category::class, 'id')],
             'order_position' => ['nullable', 'integer', 'min:0'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string'],

@@ -8,7 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('media', function (Blueprint $table) {
+        $prefix = config('blog.table_prefix', '');
+
+        Schema::create($prefix . 'media', function (Blueprint $table) use ($prefix) {
             $table->id();
             $table->string('file_name');
             $table->string('file_path', 500);
@@ -21,7 +23,7 @@ return new class extends Migration
             $table->text('caption')->nullable();
             $table->text('description')->nullable();
             $table->foreignId('uploaded_by')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('post_id')->nullable()->constrained('posts')->nullOnDelete();
+            $table->foreignId('post_id')->nullable()->constrained($prefix . 'posts')->nullOnDelete();
             $table->softDeletes();
             $table->timestamps();
 
@@ -34,6 +36,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('media');
+        $prefix = config('blog.table_prefix', '');
+        Schema::dropIfExists($prefix . 'media');
     }
 };

@@ -3,6 +3,8 @@
 namespace SakibAliMalik\Blog\Requests\Media;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use SakibAliMalik\Blog\Models\Post;
 
 class UpdateMediaRequest extends FormRequest
 {
@@ -17,7 +19,7 @@ class UpdateMediaRequest extends FormRequest
             'alt_text' => ['nullable', 'string', 'max:255'],
             'caption' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
-            'post_id' => ['nullable', 'integer', 'exists:posts,id'],
+            'post_id' => ['nullable', 'integer', Rule::exists(Post::class, 'id')],
         ];
     }
 

@@ -24,6 +24,11 @@ class PostComment extends Model
         'parent_id' => 'integer',
     ];
 
+    public function getTable(): string
+    {
+        return config('blog.table_prefix', '') . 'post_comments';
+    }
+
     public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class);

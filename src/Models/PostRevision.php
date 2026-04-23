@@ -12,6 +12,11 @@ class PostRevision extends Model
 
     public const UPDATED_AT = null;
 
+    public function getTable(): string
+    {
+        return config('blog.table_prefix', '') . 'post_revisions';
+    }
+
     protected $fillable = [
         'post_id', 'user_id', 'title', 'content',
         'content_json', 'excerpt', 'revision_note',

@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('post_views', function (Blueprint $table) {
+        $prefix = config('blog.table_prefix', '');
+
+        Schema::create($prefix . 'post_views', function (Blueprint $table) use ($prefix) {
             $table->id();
-            $table->foreignId('post_id')->constrained('posts')->cascadeOnDelete();
+            $table->foreignId('post_id')->constrained($prefix . 'posts')->cascadeOnDelete();
             $table->string('visitor_id', 64);
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
@@ -23,6 +25,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('post_views');
+        $prefix = config('blog.table_prefix', '');
+        Schema::dropIfExists($prefix . 'post_views');
     }
 };

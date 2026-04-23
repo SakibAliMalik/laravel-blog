@@ -29,6 +29,11 @@ class Media extends Model
 
     protected $appends = ['url', 'size_formatted'];
 
+    public function getTable(): string
+    {
+        return config('blog.table_prefix', '') . 'media';
+    }
+
     public function uploader(): BelongsTo
     {
         return $this->belongsTo(config('blog.user_model'), 'uploaded_by');

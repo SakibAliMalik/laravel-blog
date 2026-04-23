@@ -4,6 +4,7 @@ namespace SakibAliMalik\Blog\Requests\Tag;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use SakibAliMalik\Blog\Models\Tag;
 
 class UpdateTagRequest extends FormRequest
 {
@@ -17,8 +18,8 @@ class UpdateTagRequest extends FormRequest
         $tagId = $this->route('id');
 
         return [
-            'name' => ['sometimes', 'string', 'max:100', Rule::unique('tags', 'name')->ignore($tagId)],
-            'slug' => ['sometimes', 'string', 'max:100', Rule::unique('tags', 'slug')->ignore($tagId)],
+            'name' => ['sometimes', 'string', 'max:100', Rule::unique(Tag::class, 'name')->ignore($tagId)],
+            'slug' => ['sometimes', 'string', 'max:100', Rule::unique(Tag::class, 'slug')->ignore($tagId)],
             'description' => ['nullable', 'string'],
             'color' => ['nullable', 'string', 'max:50'],
         ];
