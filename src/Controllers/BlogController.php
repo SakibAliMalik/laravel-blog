@@ -50,7 +50,8 @@ class BlogController extends Controller
             $query = Post::query()
                 ->filter($postFilter)
                 ->published()
-                ->select('id', 'title', 'slug', 'featured_image', 'status', 'read_time', 'published_at');
+                ->select('id', 'category_id', 'title', 'slug', 'featured_image', 'status', 'read_time', 'published_at')
+                ->with('category:id,name');
 
             $result = $this->handlePagination($query, [], [], request()->boolean('pagination.export', false));
 
@@ -61,6 +62,19 @@ class BlogController extends Controller
                     $result['errors'] ?? []
                 );
             }
+
+            $result['categories'] = Category::select('id', 'name', 'description', 'icon')
+                ->withCount(['posts' => fn($q) => $q->published()])
+                ->orderBy('posts_count', 'asc')
+                ->get()
+                ->map(fn($c) => [
+                    'id'          => $c->id,
+                    'name'        => $c->name,
+                    'description' => $c->description,
+                    'icon'        => $c->icon,
+                    'blogs_count' => $c->posts_count,
+                ])
+                ->values();
 
             return $this->successResponse($result, 'Records retrieved successfully.');
         } catch (\Throwable $th) {

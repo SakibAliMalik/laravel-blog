@@ -6,7 +6,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use SakibAliMalik\Blog\Enums\PostStatusEnum;
+use SakibAliMalik\Blog\Jobs\PublishPostJob;
 use SakibAliMalik\Blog\Filters\PostFilter;
 use SakibAliMalik\Blog\Models\Post;
 use SakibAliMalik\Blog\Requests\Post\BulkPostActionRequest;
@@ -75,6 +77,10 @@ class PostController extends Controller
                 $post->tags()->sync($request->input('tags', []));
             }
 
+            if ($post->status === PostStatusEnum::SCHEDULED && $post->published_at) {
+                $this->schedulePublishJob($post);
+            }
+
             $post->createRevision('Initial version');
             $post->load(['author', 'category', 'tags', 'media']);
             DB::commit();
@@ -103,7 +109,19 @@ class PostController extends Controller
                 $post->createRevision('Before update');
             }
 
+            $statusChanged = isset($payload['status']) && $payload['status'] !== $post->status->value;
+            $timeChanged = isset($payload['published_at']) && $payload['published_at']->toDateTimeString() !== $post->published_at?->toDateTimeString();
+
+            if ($statusChanged || $timeChanged) {
+                $this->cancelPendingJob($post);
+            }
+
             $post->update($payload);
+
+            $updatedPost = $post->fresh();
+            if ($updatedPost->status === PostStatusEnum::SCHEDULED && $updatedPost->published_at && ($statusChanged || $timeChanged)) {
+                $this->schedulePublishJob($updatedPost);
+            }
 
             if ($request->has('tags')) {
                 $post->tags()->sync($request->input('tags', []));
@@ -183,6 +201,20 @@ class PostController extends Controller
             DB::rollBack();
             $this->logsError(static::class, Post::class, __FUNCTION__, $th, ['id' => $id]);
             return $this->someThingWentWrong($th);
+        }
+    }
+
+    private function schedulePublishJob(Post $post): void
+    {
+        $jobId = Queue::later($post->published_at, new PublishPostJob($post, $post->published_at->toDateTimeString()));
+        $post->updateQuietly(['pending_job_id' => $jobId]);
+    }
+
+    private function cancelPendingJob(Post $post): void
+    {
+        if ($post->pending_job_id) {
+            DB::table('jobs')->where('id', $post->pending_job_id)->delete();
+            $post->updateQuietly(['pending_job_id' => null]);
         }
     }
 

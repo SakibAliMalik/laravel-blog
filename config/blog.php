@@ -31,4 +31,12 @@ return [
      * Array:  multiple fields joined with a space → ['first_name', 'last_name']
      */
     'user_name_attribute' => ['first_name', 'last_name'],
+
+    /*
+     * The timezone in which published_at dates are submitted from the frontend.
+     * If set, incoming published_at values are converted from this timezone to UTC before saving.
+     * Leave null to skip conversion (when the frontend already sends UTC).
+     * Example: 'Asia/Karachi', 'America/New_York'
+     */
+    'input_timezone' => null,
 ];

@@ -24,6 +24,7 @@ class Post extends Model
         'author_id', 'category_id', 'status', 'published_at',
         'meta_title', 'meta_description', 'meta_keywords',
         'og_image', 'canonical_url', 'views_count', 'read_time',
+        'pending_job_id',
     ];
 
     protected $casts = [
