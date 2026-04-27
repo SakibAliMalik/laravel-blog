@@ -63,13 +63,14 @@ class BlogController extends Controller
                 );
             }
 
-            $result['categories'] = Category::select('id', 'name', 'description', 'icon')
+            $result['categories'] = Category::select('id', 'name', 'slug', 'description', 'icon')
                 ->withCount(['posts' => fn($q) => $q->published()])
                 ->orderBy('posts_count', 'asc')
                 ->get()
                 ->map(fn($c) => [
                     'id'          => $c->id,
                     'name'        => $c->name,
+                    'slug'        => $c->slug,
                     'description' => $c->description,
                     'icon'        => $c->icon,
                     'blogs_count' => $c->posts_count,
