@@ -51,8 +51,7 @@ trait ApiResponseTrait
 
         return $this->failedApiResponse(
             trans('messages.something_went_wrong', [], null) ?? 'Something went wrong.',
-            Response::HTTP_INTERNAL_SERVER_ERROR,
-            $error
+            Response::HTTP_INTERNAL_SERVER_ERROR
         );
     }
 

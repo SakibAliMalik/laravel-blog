@@ -29,7 +29,7 @@ class PostResource extends JsonResource
             'meta_keywords' => $this->meta_keywords,
             'og_image' => $this->og_image,
             'canonical_url' => $this->canonical_url,
-            'category' => new CategoryResource($this->whenLoaded('category')),
+            'category' => $this->whenLoaded('category', fn() => $this->category ? new CategoryResource($this->category) : null),
             'author' => $this->whenLoaded('author', fn() => [
                 'id' => $this->author?->id,
                 'name' => $this->resolveUserName($this->author),
