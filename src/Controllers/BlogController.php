@@ -51,7 +51,7 @@ class BlogController extends Controller
                 ->filter($postFilter)
                 ->published()
                 ->select('id', 'category_id', 'title', 'slug', 'featured_image', 'status', 'read_time', 'published_at')
-                ->with('category:id,name');
+                ->with('category:id,name,slug');
 
             $result = $this->handlePagination($query, [], [], request()->boolean('pagination.export', false));
 
