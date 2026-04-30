@@ -105,6 +105,10 @@ class PostController extends Controller
         try {
             $payload = $request->payload();
 
+            if (empty($payload)) {
+                return $this->failedApiResponse('No updatable fields were provided.', Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
             if (array_key_exists('content', $payload) && $payload['content'] !== $post->content) {
                 $post->createRevision('Before update');
             }

@@ -61,8 +61,11 @@ class UpdatePostRequest extends FormRequest
             $data['published_at'] = $data['published_at'] ?? now();
         }
 
-        if (!empty($data['published_at']) && $timezone = config('blog.input_timezone')) {
-            $data['published_at'] = \Carbon\Carbon::parse($data['published_at'], $timezone)->utc();
+        if (!empty($data['published_at'])) {
+            $timezone = config('blog.input_timezone');
+            $data['published_at'] = $timezone
+                ? \Carbon\Carbon::parse($data['published_at'], $timezone)->utc()
+                : \Carbon\Carbon::parse($data['published_at']);
         }
 
         return array_filter($data, static fn($value) => !is_null($value));
