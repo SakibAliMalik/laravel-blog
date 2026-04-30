@@ -153,7 +153,7 @@ class BlogController extends Controller
             $data = (new PostResource($post))->toArray(request());
             $data['helpful_articles'] = Post::where('category_id', $post->category_id)
                 ->where('id', '!=', $post->id)
-                ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at')
+                ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at', 'read_time')
                 ->latest('published_at')
                 ->take(3)
                 ->get();
@@ -165,7 +165,7 @@ class BlogController extends Controller
                 ->get();
             $data['trending_resource'] = Post::where('category_id', $post->category_id)
                 ->where('id', '!=', $post->id)
-                ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at', 'views_count')
+                ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at', 'views_count', 'read_time')
                 ->latest('views_count')
                 ->take(6)
                 ->get();
