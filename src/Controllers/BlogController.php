@@ -151,6 +151,7 @@ class BlogController extends Controller
             }
 
             $data = (new PostResource($post))->toArray(request());
+            $data['schema'] = $this->buildPostSchema($post);
             $data['helpful_articles'] = Post::where('category_id', $post->category_id)
                 ->where('id', '!=', $post->id)
                 ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at', 'read_time')
@@ -208,5 +209,41 @@ class BlogController extends Controller
             $this->logsError(static::class, PostView::class, __FUNCTION__, $th, $request->all());
             return $this->someThingWentWrong($th);
         }
+    }
+
+    private function buildPostSchema(Post $post): array
+    {
+        $frontendUrl = rtrim((string) (config('app.frontend_url') ?: config('app.url')), '/');
+        $categorySlug = $post->category?->slug;
+        $canonicalPath = $categorySlug ? "resources/{$categorySlug}/{$post->slug}" : "resources/{$post->slug}";
+        $canonicalUrl = $post->canonical_url ?: "{$frontendUrl}/{$canonicalPath}";
+        $imageUrl = $this->absoluteUrl($post->og_image ?: $post->featured_image);
+        $authorUrl = $this->resolveAuthorUrl($post->author);
+        $publisherLogoUrl = $this->absoluteUrl(config('app.logo_url') ?: "{$frontendUrl}/logo.png");
+
+        return $this->removeEmptySchemaValues([
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $post->meta_title ?: $post->title,
+            'description' => $post->meta_description ?: $post->excerpt,
+            'image' => $imageUrl,
+            'datePublished' => $post->published_at?->toIso8601String(),
+            'dateModified' => $post->updated_at?->toIso8601String(),
+            'author' => [
+                '@type' => 'Person',
+                'name' => $this->resolveUserName($post->author),
+                'url' => $authorUrl,
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Jump Recruiter',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => $publisherLogoUrl,
+                ],
+            ],
+            'url' => $canonicalUrl,
+            'wordCount' => str_word_count(strip_tags((string) $post->content)),
+        ]);
     }
 }
