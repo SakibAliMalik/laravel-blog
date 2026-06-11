@@ -16,12 +16,14 @@ use SakibAliMalik\Blog\Resources\PostResource;
 use SakibAliMalik\Blog\Resources\TagResource;
 use SakibAliMalik\Blog\Traits\ApiResponseTrait;
 use SakibAliMalik\Blog\Traits\PaginationTrait;
+use SakibAliMalik\Blog\Traits\ResolvesUserName;
 use Symfony\Component\HttpFoundation\Response;
 
 class BlogController extends Controller
 {
     use ApiResponseTrait;
     use PaginationTrait;
+    use ResolvesUserName;
 
     public function categories(): JsonResponse
     {
@@ -245,5 +247,48 @@ class BlogController extends Controller
             'url' => $canonicalUrl,
             'wordCount' => str_word_count(strip_tags((string) $post->content)),
         ]);
+    }
+
+    private function absoluteUrl(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        $baseUrl = rtrim((string) config('app.url'), '/');
+        $path = ltrim($path, '/');
+
+        return $baseUrl ? "{$baseUrl}/{$path}" : "/{$path}";
+    }
+
+    private function resolveAuthorUrl(?object $author): ?string
+    {
+        if (!$author) {
+            return null;
+        }
+
+        foreach (['url', 'profile_url', 'website'] as $attribute) {
+            if (!empty($author->{$attribute})) {
+                return $this->absoluteUrl($author->{$attribute});
+            }
+        }
+
+        return null;
+    }
+
+    private function removeEmptySchemaValues(array $values): array
+    {
+        return collect($values)
+            ->map(function ($value) {
+                return is_array($value) ? $this->removeEmptySchemaValues($value) : $value;
+            })
+            ->reject(function ($value) {
+                return $value === null || $value === '' || $value === [];
+            })
+            ->all();
     }
 }
