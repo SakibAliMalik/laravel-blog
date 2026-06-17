@@ -2,14 +2,13 @@
 
 namespace SakibAliMalik\Blog\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use SakibAliMalik\Blog\Traits\ResolvesUserName;
 
 class MediaResource extends JsonResource
 {
     use ResolvesUserName;
-    public function toArray(Request $request): array
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,

@@ -4,8 +4,8 @@ A reusable blog module for Laravel applications. Provides a complete blog API wi
 
 ## Requirements
 
-- PHP 8.2+
-- Laravel 11 or 12
+- PHP 8.1+
+- Laravel 9, 10, 11, or 12
 - Laravel Sanctum (for admin route authentication)
 
 ## Installation

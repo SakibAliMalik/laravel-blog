@@ -3,13 +3,17 @@
 namespace SakibAliMalik\Blog\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use SakibAliMalik\Blog\Enums\PostStatusEnum;
 use SakibAliMalik\Blog\Models\Post;
 
 class PublishPostJob implements ShouldQueue
 {
+    use InteractsWithQueue;
     use Queueable;
+    use SerializesModels;
 
     public function __construct(
         public readonly Post $post,
