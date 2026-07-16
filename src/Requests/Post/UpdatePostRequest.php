@@ -51,23 +51,48 @@ class UpdatePostRequest extends FormRequest
 
     public function payload(): array
     {
-        $data = $this->safe()->only([
-            'title', 'slug', 'content', 'content_json', 'excerpt', 'featured_image',
-            'category_id', 'status', 'published_at',
-            'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical_url',
-        ]);
+        // Only allow null for fields in rules that are explicitly nullable
+        $nullableFields = [
+            'content_json', 'excerpt', 'featured_image', 'category_id', 'published_at',
+            'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical_url'
+        ];
+        $otherFields = [
+            'title', 'slug', 'content', 'status'
+        ];
 
-        if (($data['status'] ?? null) === 'published') {
+        $data = [];
+
+        // Use input() to preserve "null" if client gives it and field is nullable
+        foreach ($nullableFields as $field) {
+            if ($this->exists($field)) {
+                $value = $this->input($field, null);
+                // Treat empty string as null for nullable fields
+                if ($value === '' || $value === []) {
+                    $value = null;
+                }
+                $data[$field] = $value;
+            }
+        }
+
+        // For other fields, only overwrite if present, do not set to null (they're required sometimes)
+        foreach ($otherFields as $field) {
+            if ($this->exists($field)) {
+                $data[$field] = $this->input($field);
+            }
+        }
+
+        // Handle published_at for status = published
+        if ((isset($data['status']) && $data['status'] === 'published')) {
             $data['published_at'] = $data['published_at'] ?? now();
         }
 
-        if (!empty($data['published_at'])) {
+        if (array_key_exists('published_at', $data) && !is_null($data['published_at']) && $data['published_at'] !== '') {
             $timezone = config('blog.input_timezone');
             $data['published_at'] = $timezone
                 ? \Carbon\Carbon::parse($data['published_at'], $timezone)->utc()
                 : \Carbon\Carbon::parse($data['published_at']);
         }
 
-        return array_filter($data, static fn($value) => !is_null($value));
+        return $data;
     }
 }
