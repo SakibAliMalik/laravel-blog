@@ -53,9 +53,6 @@ class Post extends Model
                 $post->read_time = static::calculateReadTime($post->content);
             }
 
-            if (empty($post->excerpt) && !empty($post->content)) {
-                $post->excerpt = Str::limit(strip_tags($post->content), 200);
-            }
 
             if (empty($post->meta_title)) {
                 $post->meta_title = $post->title;
