@@ -62,10 +62,6 @@ class Post extends Model
         static::updating(function (Post $post): void {
             if ($post->isDirty('content')) {
                 $post->read_time = static::calculateReadTime($post->content);
-
-                if (empty($post->excerpt)) {
-                    $post->excerpt = Str::limit(strip_tags($post->content), 200);
-                }
             }
         });
     }
