@@ -156,6 +156,7 @@ class BlogController extends Controller
             $data['schema'] = $this->buildPostSchema($post);
             $data['helpful_articles'] = Post::where('category_id', $post->category_id)
                 ->where('id', '!=', $post->id)
+                ->published()
                 ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at', 'read_time')
                 ->latest('published_at')
                 ->take(3)
