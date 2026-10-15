@@ -146,7 +146,7 @@ class BlogController extends Controller
     public function blogShow(string $slug): JsonResponse
     {
         try {
-            $post = Post::with(['author', 'category', 'tags', 'media'])->where('slug', $slug)->first();
+            $post = Post::with(['author', 'category', 'tags', 'media'])->where('slug', $slug)->published()->first();
 
             if (!$post) {
                 return $this->failedApiResponse('Blog post not found.', Response::HTTP_NOT_FOUND);
