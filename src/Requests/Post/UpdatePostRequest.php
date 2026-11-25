@@ -38,6 +38,7 @@ class UpdatePostRequest extends FormRequest
             'featured_image' => ['nullable', 'string', 'max:500'],
             'category_id' => ['nullable', 'integer', Rule::exists(Category::class, 'id')],
             'status' => ['sometimes', Rule::in(['draft', 'published', 'scheduled', 'archived'])],
+            'is_featured' => ['nullable', 'boolean'],
             'published_at' => ['nullable', 'date'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', Rule::exists(Tag::class, 'id')],
@@ -53,7 +54,7 @@ class UpdatePostRequest extends FormRequest
     {
         // Only allow null for fields in rules that are explicitly nullable
         $nullableFields = [
-            'content_json', 'excerpt', 'featured_image', 'category_id', 'published_at',
+            'content_json', 'excerpt', 'featured_image', 'category_id', 'is_featured', 'published_at',
             'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical_url'
         ];
         $otherFields = [
