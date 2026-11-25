@@ -52,7 +52,7 @@ class BlogController extends Controller
             $query = Post::query()
                 ->filter($postFilter)
                 ->published()
-                ->select('id', 'category_id', 'title', 'slug', 'featured_image', 'status', 'is_featured', 'read_time', 'published_at')
+                ->select('id', 'category_id', 'title', 'slug', 'featured_image', 'status', 'read_time', 'published_at')
                 ->with('category:id,name,slug');
 
             $result = $this->handlePagination($query, [], [], request()->boolean('pagination.export', false));
@@ -101,7 +101,7 @@ class BlogController extends Controller
                 ->reorder()
                 ->orderByDesc('published_at')
                 ->orderByDesc('id')
-                ->select('id', 'title', 'slug', 'excerpt', 'featured_image', 'is_featured', 'published_at', 'views_count', 'read_time')
+                ->select('id', 'title', 'slug', 'excerpt', 'featured_image', 'published_at', 'views_count', 'read_time')
                 ->limit((int) $request->integer('limit', 6))
                 ->get();
 
@@ -157,7 +157,7 @@ class BlogController extends Controller
             $data['helpful_articles'] = Post::where('category_id', $post->category_id)
                 ->where('id', '!=', $post->id)
                 ->published()
-                ->select('id', 'title', 'slug', 'featured_image', 'status', 'is_featured', 'published_at', 'read_time')
+                ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at', 'read_time')
                 ->latest('published_at')
                 ->take(3)
                 ->get();
@@ -169,7 +169,7 @@ class BlogController extends Controller
                 ->get();
             $data['trending_resource'] = Post::where('category_id', $post->category_id)
                 ->where('id', '!=', $post->id)
-                ->select('id', 'title', 'slug', 'featured_image', 'status', 'is_featured', 'published_at', 'views_count', 'read_time')
+                ->select('id', 'title', 'slug', 'featured_image', 'status', 'published_at', 'views_count', 'read_time')
                 ->latest('views_count')
                 ->take(6)
                 ->get();

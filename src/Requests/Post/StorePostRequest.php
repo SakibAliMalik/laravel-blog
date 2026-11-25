@@ -36,7 +36,6 @@ class StorePostRequest extends FormRequest
             'featured_image' => ['nullable', 'string', 'max:500'],
             'category_id' => ['nullable', 'integer', Rule::exists(Category::class, 'id')],
             'status' => ['required', Rule::in(['draft', 'published', 'scheduled', 'archived'])],
-            'is_featured' => ['nullable', 'boolean'],
             'published_at' => ['nullable', 'date'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', Rule::exists(Tag::class, 'id')],
@@ -52,7 +51,7 @@ class StorePostRequest extends FormRequest
     {
         $data = $this->safe()->only([
             'title', 'slug', 'content', 'content_json', 'excerpt', 'featured_image',
-            'category_id', 'status', 'is_featured', 'published_at',
+            'category_id', 'status', 'published_at',
             'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical_url',
         ]);
 

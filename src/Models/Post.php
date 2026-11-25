@@ -21,7 +21,7 @@ class Post extends Model
 
     protected $fillable = [
         'title', 'slug', 'content', 'content_json', 'excerpt', 'featured_image',
-        'author_id', 'category_id', 'status', 'is_featured', 'published_at',
+        'author_id', 'category_id', 'status', 'published_at',
         'meta_title', 'meta_description', 'meta_keywords',
         'og_image', 'canonical_url', 'views_count', 'read_time',
         'pending_job_id',
@@ -33,7 +33,6 @@ class Post extends Model
         'views_count' => 'integer',
         'read_time' => 'integer',
         'status' => PostStatusEnum::class,
-        'is_featured' => 'boolean',
     ];
 
     protected $appends = ['is_published', 'reading_time_text'];
